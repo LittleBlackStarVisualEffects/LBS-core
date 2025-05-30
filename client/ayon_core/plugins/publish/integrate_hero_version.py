@@ -3,9 +3,19 @@ import copy
 import errno
 import itertools
 import shutil
+<<<<<<< HEAD
 from concurrent.futures import ThreadPoolExecutor
 
 from speedcopy import copyfile
+=======
+import sys
+from concurrent.futures import ThreadPoolExecutor
+# this is needed until speedcopy for linux is fixed
+if sys.platform == "win32":
+    from speedcopy import copyfile
+else:
+    from shutil import copyfile
+>>>>>>> 03d24db43e042840dc36589f64d21f100e01a8b1
 
 import clique
 import pyblish.api
@@ -17,7 +27,11 @@ from ayon_api.operations import (
 from ayon_api.utils import create_entity_id
 
 from ayon_core.lib import create_hard_link, source_hash
+<<<<<<< HEAD
 from ayon_core.lib.file_transaction import wait_for_future_errors
+=======
+from ayon_core.lib.file_transaction import as_completed_stop_and_raise_on_error
+>>>>>>> 03d24db43e042840dc36589f64d21f100e01a8b1
 from ayon_core.pipeline.publish import (
     get_publish_template_name,
     OptionalPyblishPluginMixin,
@@ -423,11 +437,19 @@ class IntegrateHeroVersion(
             with ThreadPoolExecutor(max_workers=8) as executor:
                 futures = [
                     executor.submit(self.copy_file, src_path, dst_path)
+<<<<<<< HEAD
                     for src_path, dst_path in itertools.chain(
                         src_to_dst_file_paths, other_file_paths_mapping
                     )
                 ]
                 wait_for_future_errors(executor, futures)
+=======
+                    for src_path, dst_path
+                    in itertools.chain(src_to_dst_file_paths,
+                                       other_file_paths_mapping)
+                ]
+                as_completed_stop_and_raise_on_error(executor, futures)
+>>>>>>> 03d24db43e042840dc36589f64d21f100e01a8b1
 
             # Update prepared representation etity data with files
             #   and integrate it to server.

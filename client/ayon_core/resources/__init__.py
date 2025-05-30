@@ -40,16 +40,16 @@ def get_liberation_font_path(bold=False, italic=False):
 
 
 def get_ayon_production_icon_filepath():
-    return get_resource("icons", "AYON_icon.png")
+    return get_resource("icons", "black_production.png")
 
 
 def get_ayon_staging_icon_filepath():
-    return get_resource("icons", "AYON_icon_staging.png")
+    return get_resource("icons", "black_staging.png")
 
 
 def get_ayon_icon_filepath(staging=None):
     if os.getenv("AYON_USE_DEV") == "1":
-        return get_resource("icons", "AYON_icon_dev.png")
+        return get_resource("icons", "black_developer.png")
 
     if staging is None:
         staging = is_staging_enabled()
@@ -64,9 +64,9 @@ def get_ayon_splash_filepath(staging=None):
         staging = is_staging_enabled()
 
     if os.getenv("AYON_USE_DEV") == "1":
-        splash_file_name = "AYON_splash_dev.png"
+        splash_file_name = "black_splash.png"
     elif staging:
-        splash_file_name = "AYON_splash_staging.png"
+        splash_file_name = "black_splash.png"
     else:
-        splash_file_name = "AYON_splash.png"
+        splash_file_name = "black_splash.png"
     return get_resource("icons", splash_file_name)

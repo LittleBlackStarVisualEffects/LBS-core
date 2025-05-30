@@ -23,14 +23,24 @@ ANSI_ESCAPE = re.compile(
 )
 AYON_ART = r"""
 
-                    ▄██▄
-         ▄███▄ ▀██▄ ▀██▀ ▄██▀ ▄██▀▀▀██▄    ▀███▄      █▄
-        ▄▄ ▀██▄  ▀██▄  ▄██▀ ██▀      ▀██▄  ▄  ▀██▄    ███
-       ▄██▀  ██▄   ▀ ▄▄ ▀  ██         ▄██  ███  ▀██▄  ███
-      ▄██▀    ▀██▄   ██    ▀██▄      ▄██▀  ███    ▀██ ▀█▀
-     ▄██▀      ▀██▄  ▀█      ▀██▄▄▄▄██▀    █▀      ▀██▄
+LLLLLLLLLLL             BBBBBBBBBBBBBBBBB      SSSSSSSSSSSSSSS 
+L:::::::::L             B::::::::::::::::B   SS:::::::::::::::S
+L:::::::::L             B::::::BBBBBB:::::B S:::::SSSSSS::::::S
+LL:::::::LL             BB:::::B     B:::::BS:::::S     SSSSSSS
+  L:::::L                 B::::B     B:::::BS:::::S            
+  L:::::L                 B::::B     B:::::BS:::::S            
+  L:::::L                 B::::BBBBBB:::::B  S::::SSSS         
+  L:::::L                 B:::::::::::::BB    SS::::::SSSSS    
+  L:::::L                 B::::BBBBBB:::::B     SSS::::::::SS  
+  L:::::L                 B::::B     B:::::B       SSSSSS::::S 
+  L:::::L                 B::::B     B:::::B            S:::::S
+  L:::::L         LLLLLL  B::::B     B:::::B            S:::::S
+LL:::::::LLLLLLLLL:::::LBB:::::BBBBBB::::::BSSSSSSS     S:::::S
+L::::::::::::::::::::::LB:::::::::::::::::B S::::::SSSSSS:::::S
+L::::::::::::::::::::::LB::::::::::::::::B  S:::::::::::::::SS 
+LLLLLLLLLLLLLLLLLLLLLLLLBBBBBBBBBBBBBBBBB    SSSSSSSSSSSSSSS   
 
-     ·  · - =[ by YNPUT ]:[ http://ayon.ynput.io ]= - ·  ·
+     ·  · - =[ Passion Led Us Here ]= - ·  ·
 
 """
 
@@ -46,7 +56,7 @@ class ConsoleInterpreterWindow(QtWidgets.QWidget):
     ):
         super().__init__(parent)
 
-        self.setWindowTitle("AYON Console")
+        self.setWindowTitle("BLACK Console")
         self.setWindowIcon(QtGui.QIcon(resources.get_ayon_icon_filepath()))
 
         if controller is None:
