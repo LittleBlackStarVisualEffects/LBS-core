@@ -11,17 +11,6 @@ class CollectCurrentAYONUser(pyblish.api.ContextPlugin):
     label = "Collect AYON User"
 
     def process(self, context):
-        import os
         user = get_ayon_username()
-        current_system_user = os.getlogin()
         context.data["user"] = user
-        context.data["current_system_user"] = current_system_user
         self.log.debug("Collected user \"{}\"".format(user))
-        self.log.debug("before comment \"{}\"".format(context.data["comment"]))
-        comment= context.data["comment"]
-        user_info = f'{current_system_user} | {context.data["machine"]}'
-        new_comment = f'{comment}   |   {user_info}' if comment else user_info
-        context.data["comment"] = new_comment
-        self.log.debug("after comment \"{}\"".format(context.data["comment"]))
-
-
