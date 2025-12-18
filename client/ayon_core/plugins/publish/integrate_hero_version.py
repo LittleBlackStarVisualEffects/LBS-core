@@ -95,12 +95,9 @@ class IntegrateHeroVersion(
     db_representation_context_keys = [
         "project",
         "folder",
-        "asset",
         "hierarchy",
         "task",
         "product",
-        "subset",
-        "family",
         "representation",
         "username",
         "output"

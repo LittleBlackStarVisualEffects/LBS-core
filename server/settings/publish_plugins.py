@@ -74,13 +74,35 @@ class CollectFramesFixDefModel(BaseSettingsModel):
     )
 
 
+def usd_contribution_layer_types():
+    return [
+        {"value": "asset", "label": "Asset"},
+        {"value": "shot", "label": "Shot"},
+    ]
+
+
 class ContributionLayersModel(BaseSettingsModel):
     _layout = "compact"
-    name: str = SettingsField(title="Name")
-    order: str = SettingsField(
+    name: str = SettingsField(
+        default="",
+        regex="[A-Za-z0-9_-]+",
+        title="Name")
+    scope: list[str] = SettingsField(
+        # This should actually be returned from a callable to `default_factory`
+        # because lists are mutable. However, the frontend can't interpret
+        # the callable. It will fail to apply it as the default. Specifying
+        # this default directly did not show any ill side effects.
+        default=["asset", "shot"],
+        title="Scope",
+        min_items=1,
+        enum_resolver=usd_contribution_layer_types)
+    order: int = SettingsField(
+        default=0,
         title="Order",
-        description="Higher order means a higher strength and stacks the "
-                    "layer on top.")
+        description=(
+            "Higher order means a higher strength and stacks the layer on top."
+        )
+    )
 
 
 class CollectUSDLayerContributionsProfileModel(BaseSettingsModel):
@@ -481,6 +503,18 @@ class UseDisplayViewModel(BaseSettingsModel):
             "View of the target transform. If left empty, the"
             " scene View value will be used."
         )
+    )
+
+
+class ExtractThumbnailFromSourceModel(BaseSettingsModel):
+    """Thumbnail extraction from source files using ffmpeg and oiiotool."""
+    enabled: bool = SettingsField(True)
+
+    target_size: ResizeModel = SettingsField(
+        default_factory=ResizeModel, title="Target size"
+    )
+    background_color: ColorRGBA_uint8 = SettingsField(
+        (0, 0, 0, 0.0), title="Background color"
     )
 
 
@@ -1259,6 +1293,16 @@ class PublishPuginsModel(BaseSettingsModel):
         default_factory=ExtractThumbnailModel,
         title="Extract Thumbnail"
     )
+    ExtractThumbnailFromSource: ExtractThumbnailFromSourceModel = SettingsField(  # noqa: E501
+        default_factory=ExtractThumbnailFromSourceModel,
+        title="Extract Thumbnail from source",
+        description=(
+            "Extract thumbnails from explicit file set in "
+            "instance.data['thumbnailSource'] using oiiotool"
+            " or ffmpeg."
+            "Used when artist provided thumbnail source."
+        )
+    )
     ExtractOIIOTranscode: ExtractOIIOTranscodeModel = SettingsField(
         default_factory=ExtractOIIOTranscodeModel,
         title="Extract OIIO Transcode"
@@ -1360,17 +1404,17 @@ DEFAULT_PUBLISH_VALUES = {
         "enabled": True,
         "contribution_layers": [
             # Asset layers
-            {"name": "model", "order": 100},
-            {"name": "assembly", "order": 150},
-            {"name": "groom", "order": 175},
-            {"name": "look", "order": 200},
-            {"name": "rig", "order": 300},
+            {"name": "model", "order": 100, "scope": ["asset"]},
+            {"name": "assembly", "order": 150, "scope": ["asset"]},
+            {"name": "groom", "order": 175, "scope": ["asset"]},
+            {"name": "look", "order": 200, "scope": ["asset"]},
+            {"name": "rig", "order": 300, "scope": ["asset"]},
             # Shot layers
-            {"name": "layout", "order": 200},
-            {"name": "animation", "order": 300},
-            {"name": "simulation", "order": 400},
-            {"name": "fx", "order": 500},
-            {"name": "lighting", "order": 600},
+            {"name": "layout", "order": 200, "scope": ["shot"]},
+            {"name": "animation", "order": 300, "scope": ["shot"]},
+            {"name": "simulation", "order": 400, "scope": ["shot"]},
+            {"name": "fx", "order": 500, "scope": ["shot"]},
+            {"name": "lighting", "order": 600, "scope": ["shot"]},
         ],
         "profiles": [
             {
@@ -1497,6 +1541,16 @@ DEFAULT_PUBLISH_VALUES = {
                 }
             }
         ]
+    },
+    "ExtractThumbnailFromSource": {
+        "enabled": True,
+        "target_size": {
+            "type": "resize",
+            "resize": {
+                "width": 300,
+                "height": 170
+            }
+        },
     },
     "ExtractOIIOTranscode": {
         "enabled": True,
