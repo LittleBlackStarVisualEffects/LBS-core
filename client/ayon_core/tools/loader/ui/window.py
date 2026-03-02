@@ -135,7 +135,7 @@ class RefreshHandler:
 
 class LoaderWindow(QtWidgets.QWidget):
     def __init__(self, controller=None, parent=None):
-    super().__init__(parent)
+        super().__init__(parent)
 
         if controller is None:
             controller = LoaderController()
