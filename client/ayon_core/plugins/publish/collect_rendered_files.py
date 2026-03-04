@@ -35,7 +35,6 @@ class CollectRenderedFiles(pyblish.api.ContextPlugin):
 
     remove_files = False
 
-    remove_files = True
     _context = None
 
     def _load_json(self, path):
@@ -112,13 +111,7 @@ class CollectRenderedFiles(pyblish.api.ContextPlugin):
             # TODO remove 'render_job_id' here and rather use
             #   'publishJobMetadata' where is needed.
             #   - this is deadline specific
-            # LBS below line commented and added new lines 
-            #instance.data["render_job_id"] = data.get("job", {}).get("_id")
-            job_data = data.get("job")
-            if isinstance(job_data, dict):
-                instance.data["render_job_id"] = job_data.get("_id")
-            else:
-                instance.data["render_job_id"] = None
+            instance.data["render_job_id"] = data.get("job", {}).get("_id")
             staging_dir_persistent = instance.data.get(
                 "stagingDir_persistent", False
             )
