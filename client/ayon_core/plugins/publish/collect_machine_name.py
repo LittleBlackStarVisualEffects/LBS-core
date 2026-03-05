@@ -6,6 +6,9 @@ Provides:
     context     -> machine (str)
 """
 
+import getpass
+import socket
+
 import pyblish.api
 
 
@@ -15,8 +18,9 @@ class CollectMachineName(pyblish.api.ContextPlugin):
     hosts = ["*"]
 
     def process(self, context):
-        import socket
-
         machine_name = socket.gethostname()
-        self.log.info("Machine name: %s" % machine_name)
-        context.data["machine"] = machine_name
+        username = getpass.getuser()
+
+        machine_value = f"{machine_name}, {username}"
+        self.log.info("Machine, user: %s", machine_value)
+        context.data["machine"] = machine_value
