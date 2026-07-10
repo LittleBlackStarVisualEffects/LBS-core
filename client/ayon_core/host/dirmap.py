@@ -189,10 +189,38 @@ class HostDirmap(ABC):
             # won't be root on cloud or sftp provider so fallback to studio
             if remote_provider != "local_drive":
                 remote_site = "studio"
+
+            # SiteSync stores roots as a list of
+            # {name, windows, linux, darwin}; normalize to a dict keyed by
+            # root name so lookups work
+            remote_roots = sync_settings["sites"][remote_site]["root"]
+            if isinstance(remote_roots, list):
+                remote_roots = {
+                    root_item["name"]: root_item
+                    for root_item in remote_roots
+                }
+
+            # roots without local override in Site Settings cannot be
+            # remapped - make that visible instead of silently skipping
+            missing_root_names = [
+                root_name
+                for root_name in remote_roots
+                if root_name not in active_roots_overrides
+            ]
+            if missing_root_names:
+                self.log.warning(
+                    "Local root overrides are not set for roots '{}' in"
+                    " Site Settings, paths with these roots won't be"
+                    " remapped.".format("', '".join(missing_root_names))
+                )
+
             for root_name, active_site_dir in active_roots_overrides.items():
+                if not active_site_dir:
+                    continue
+
                 remote_site_dir = (
                     remote_roots_overrides.get(root_name)
-                    or sync_settings["sites"][remote_site]["root"][root_name]
+                    or remote_roots.get(root_name)
                 )
 
                 if isinstance(remote_site_dir, dict):
@@ -201,14 +229,23 @@ class HostDirmap(ABC):
                 if not remote_site_dir:
                     continue
 
-                if os.path.isdir(active_site_dir):
-                    if "destination_path" not in mapping:
-                        mapping["destination_path"] = []
-                    mapping["destination_path"].append(active_site_dir)
+                if not os.path.isdir(active_site_dir):
+                    # sync creates the folder on first download - map the
+                    # root anyway so scene paths point where files will be
+                    self.log.warning(
+                        "Local folder '{}' for root '{}' does not exist"
+                        " yet, mapping it anyway.".format(
+                            active_site_dir, root_name
+                        )
+                    )
 
-                    if "source_path" not in mapping:
-                        mapping["source_path"] = []
-                    mapping["source_path"].append(remote_site_dir)
+                if "destination_path" not in mapping:
+                    mapping["destination_path"] = []
+                mapping["destination_path"].append(active_site_dir)
+
+                if "source_path" not in mapping:
+                    mapping["source_path"] = []
+                mapping["source_path"].append(remote_site_dir)
 
             self.log.debug("local sync mapping:: {}".format(mapping))
         return mapping
