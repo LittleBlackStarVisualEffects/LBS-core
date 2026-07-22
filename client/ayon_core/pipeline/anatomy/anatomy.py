@@ -519,8 +519,22 @@ class Anatomy(BaseAnatomy):
                 )
             else:
                 # Ask sync server to get roots overrides
-                roots_overrides = sitesync_addon.get_site_root_overrides(
-                    project_name, site_name
-                )
+                # - sitesync raises ValueError for sites other than
+                #   'studio'/'local'/machine site id (e.g. user picked a
+                #   cloud site as active site) - fall back to no overrides
+                #   instead of breaking Anatomy completely
+                try:
+                    roots_overrides = sitesync_addon.get_site_root_overrides(
+                        project_name, site_name
+                    )
+                except ValueError:
+                    log.warning(
+                        "Failed to receive root overrides for site '{}'"
+                        " of project '{}', using no overrides.".format(
+                            site_name, project_name
+                        ),
+                        exc_info=True
+                    )
+                    roots_overrides = {}
             site_cache.update_data(roots_overrides)
         return site_cache.get_data()
