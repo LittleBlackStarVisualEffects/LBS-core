@@ -1,6 +1,6 @@
 """Collect AYON addons."""
-from dataclasses import dataclass
-from typing import Optional
+from __future__ import annotations
+
 import os
 
 import pyblish.api
@@ -15,16 +15,23 @@ from ayon_core.lib.ayon_info import (
 from ayon_core.addon import AddonsManager, get_bundle_information
 
 
-# NOTE: no `from __future__ import annotations` in this file — stringified
-# annotations on a module-level dataclass crash under pyblish's legacy
-# discover() (module not in sys.modules during exec), silently skipping
-# this plugin and breaking every farm-submit plugin downstream.
-@dataclass
+# NOTE: keep `AddonInfo` a plain class -- do NOT make it a dataclass.
+# `@dataclass` resolves the class annotations at module exec time, which
+# crashes under pyblish's legacy discover() (the module is not yet in
+# sys.modules), silently skipping this plugin and breaking every
+# farm-submit plugin downstream.
 class AddonInfo:
-    name: str
-    version: Optional[str]
-    server_version: Optional[str]
-    label: Optional[str] = None
+    def __init__(
+        self,
+        name: str,
+        version: str | None,
+        server_version: str | None,
+        label: str | None = None,
+    ) -> None:
+        self.name = name
+        self.version = version
+        self.server_version = server_version
+        self.label = label
 
     def get_row(
         self, name_width: int, version_width: int, server_version_width: int
