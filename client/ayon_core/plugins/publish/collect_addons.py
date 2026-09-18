@@ -15,6 +15,11 @@ from ayon_core.lib.ayon_info import (
 from ayon_core.addon import AddonsManager, get_bundle_information
 
 
+# NOTE: keep `AddonInfo` a plain class -- do NOT make it a dataclass.
+# `@dataclass` resolves the class annotations at module exec time, which
+# crashes under pyblish's legacy discover() (the module is not yet in
+# sys.modules), silently skipping this plugin and breaking every
+# farm-submit plugin downstream.
 class AddonInfo:
     def __init__(
         self,

@@ -32,6 +32,7 @@ class ExtractReviewSlate(publish.Extractor):
 
     hosts = ["nuke", "shell"]
     optional = True
+    enabled = False 
 
     def process(self, instance):
         inst_data = instance.data

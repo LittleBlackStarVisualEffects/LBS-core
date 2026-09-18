@@ -9,7 +9,7 @@ from ayon_core.resources import get_ayon_icon_filepath
 class ShowInAYON(LauncherAction):
     """Open AYON browser page to the current context."""
     name = "showinayon"
-    label = "Show in AYON"
+    label = "Show in BLACK"
     icon = get_ayon_icon_filepath()
     order = 999
 
